@@ -1,8 +1,10 @@
 import axios from 'axios'
+import router from '@/router'
 
 const state = {
-    context: 'http://localhost:5000/',
-    bugsmusic : []
+    context : 'http://localhost:5000/',
+    bugsmusic : [],
+    count : 0
 }
 
 const actions = {
@@ -14,8 +16,8 @@ const actions = {
             'Content-Type': 'application/json'
         })
             .then(({data})=>{
-                alert('검색된 결과 수 : '+data.count)
                 commit('SEARCH',data)
+                router.push("/retrieve")
             })
             .catch(()=>{
                 alert('통신 실패 !')
@@ -25,16 +27,29 @@ const actions = {
 
 const mutations = {
     SEARCH(state, data){
-        state.bugsmusic = []
-        data.forEach( item =>{
+        alert('mutation 검색된 결과 수 : '+data.count)
+        state.bugsmusic = [] //new
+        state.count = data.count
+        data.list.forEach(item => {
+            state.bugsmusic.push({
+                seq : item.seq,
+                artist :item.artist,
+                title : item.title,
+                album : item.album,
+                thumbnail : item.thumbnail
+            })
+        })
+        /*data.forEach( item =>{
             alert(item)
             state.bugsmusic.push([])
-        })
+        })*/
+
     }
 }
 
 const getters = {
-    bugsmusic : state => state.bugsmusic // 스테이트의 벅스뮤직을 리턴
+    bugsmusic : state => state.bugsmusic, // 스테이트의 벅스뮤직을 리턴
+    count : state => state.count
 }
 
 export default {
